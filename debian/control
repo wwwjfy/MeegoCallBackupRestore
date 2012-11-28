@@ -1,0 +1,12 @@
+Source: callbackuprestore
+Section: user/Other
+Priority: extra
+Maintainer: Tony Wang <wwwjfy@gmail.com>
+Build-Depends: debhelper (>= 7), dpatch
+Standards-Version: 3.8.4
+Homepage: https://github.com/wwwjfy/MeegoCallBackupRestore
+
+Package: callbackuprestore
+Architecture: any
+Depends: qt-components, ${shlibs:Depends}, ${misc:Depends}
+Description: Call log backup and restore tool using csv
