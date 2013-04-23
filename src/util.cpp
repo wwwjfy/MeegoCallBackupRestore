@@ -67,23 +67,41 @@ void Util::exportCall(QTextStream &out) {
     model.setQueryMode(EventModel::SyncQuery);
     CallModel::Sorting sorting = CallModel::SortByTime;
     model.setFilter(sorting);
-    model.getEvents();
     QString direction;
-    for (int i = 0; i < model.rowCount(); i++) {
-        Event event = model.event(model.index(i, 0));
-        if (event.direction() == Event::Inbound) {
-            direction = QString("1");
-            if (event.isMissedCall()) {
-                direction = QString("2");
+
+    int limit = 1000;
+    int offset = 0;
+    bool keepgoing = true;
+
+    while(keepgoing) {
+        int count = 0;
+        model.setLimit(limit);
+        model.setOffset(offset);
+        std::cout << "  getEvents() from " << offset << " to " << offset + limit << std::endl;
+        model.getEvents();
+        std::cout << "  got " << model.rowCount() << " events" << std::endl;
+        count = model.rowCount();
+        offset += count;
+
+        // If we got less than limit events, then it's the last batch
+        keepgoing = (count == limit);
+
+        for (int i = 0; i < model.rowCount(); i++) {
+            Event event = model.event(model.index(i, 0));
+            if (event.direction() == Event::Inbound) {
+                direction = QString("1");
+                if (event.isMissedCall()) {
+                    direction = QString("2");
+                }
+            } else {
+                direction = QString("0");
             }
-        } else {
-            direction = QString("0");
+            out << QString(event.localUid() % QChar(',') %
+                           event.remoteUid() % QChar(',') %
+                           direction % QChar(',') %
+                           event.startTime().toLocalTime().toString(QString("yyyy-MM-dd hh:mm:ss")) % QChar(',') %
+                           event.endTime().toLocalTime().toString(QString("yyyy-MM-dd hh:mm:ss")));
+            out << "\n";
         }
-        out << QString(event.localUid() % QChar(',') %
-                       event.remoteUid() % QChar(',') %
-                       direction % QChar(',') %
-                       event.startTime().toLocalTime().toString(QString("yyyy-MM-dd hh:mm:ss")) % QChar(',') %
-                       event.endTime().toLocalTime().toString(QString("yyyy-MM-dd hh:mm:ss")));
-        out << "\n";
     }
 }
