@@ -81,10 +81,10 @@ void Util::exportCall(QTextStream &out) {
         model.getEvents();
         std::cout << "  got " << model.rowCount() << " events" << std::endl;
         count = model.rowCount();
-        offset += count;
+        offset += limit;
 
-        // If we got less than limit events, then it's the last batch
-        keepgoing = (count == limit);
+        // Stop when no more events found
+        keepgoing = (count > 0);
 
         for (int i = 0; i < model.rowCount(); i++) {
             Event event = model.event(model.index(i, 0));

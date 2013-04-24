@@ -1,0 +1,15 @@
+*.deb
+*.log
+*.o
+
+src/callbackuprestore
+src/moc_catcher.cpp
+
+Makefile
+build-stamp
+configure-stamp
+
+debian/callbackuprestore/
+debian/files
+debian/callbackuprestore.aegis
+debian/callbackuprestore.substvars
